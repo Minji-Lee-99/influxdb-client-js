@@ -4,13 +4,13 @@ import {
   WriteOptions,
   WritePrecisionType,
 } from '../options'
-import {Transport, SendOptions} from '../transport'
-import {Headers} from '../results'
-import {Log} from '../util/logger'
-import {HttpError, RetryDelayStrategy} from '../errors'
-import {Point} from '../Point'
-import {currentTime, dateToProtocolTimestamp} from '../util/currentTime'
-import {createRetryDelayStrategy} from './retryStrategy'
+import { Transport, SendOptions } from '../transport'
+import { Headers } from '../results'
+import { Log } from '../util/logger'
+import { HttpError, RetryDelayStrategy } from '../errors'
+import { Point } from '../Point'
+import { currentTime, dateToProtocolTimestamp } from '../util/currentTime'
+import { createRetryDelayStrategy } from './retryStrategy'
 import RetryBuffer from './RetryBuffer'
 import utf8Length from '../util/utf8Length'
 
@@ -172,10 +172,10 @@ export default class WriteApiImpl implements WriteApi {
         if (onRetry) {
           return onRetry
         }
-        Log.error(
-          `Write to InfluxDB failed (attempt: ${failedAttempts}).`,
-          error
-        )
+        // Log.error(
+        //   `Write to InfluxDB failed (attempt: ${failedAttempts}).`,
+        //   error
+        // )
         return Promise.reject(error)
       }
       return new Promise<void>((resolve, reject) => {
@@ -205,7 +205,7 @@ export default class WriteApiImpl implements WriteApi {
               typeof error.json.error === 'string' &&
               error.json.error.includes('hinted handoff queue not empty')
             ) {
-              Log.warn('Write to InfluxDB returns: ' + error.json.error)
+              // Log.warn('Write to InfluxDB returns: ' + error.json.error)
               responseStatusCode = 204
               callbacks.complete()
               return
@@ -217,10 +217,10 @@ export default class WriteApiImpl implements WriteApi {
               (!(error instanceof HttpError) ||
                 (error as HttpError).statusCode >= 429)
             ) {
-              Log.warn(
-                `Write to InfluxDB failed (attempt: ${failedAttempts}).`,
-                error
-              )
+              // Log.warn(
+              //   `Write to InfluxDB failed (attempt: ${failedAttempts}).`,
+              //   error
+              // )
               self.retryBuffer.addLines(
                 lines,
                 retryAttempts - 1,
@@ -230,7 +230,7 @@ export default class WriteApiImpl implements WriteApi {
               reject(error)
               return
             }
-            Log.error(`Write to InfluxDB failed.`, error)
+            // Log.error(`Write to InfluxDB failed.`, error)
             reject(error)
           },
           complete(): void {
@@ -311,10 +311,10 @@ export default class WriteApiImpl implements WriteApi {
     const retVal = this.writeBuffer.flush().finally(() => {
       const remaining = this.retryBuffer.close()
       if (remaining) {
-        Log.error(
-          `Retry buffer closed with ${remaining} items that were not written to InfluxDB!`,
-          null
-        )
+        // Log.error(
+        //   `Retry buffer closed with ${remaining} items that were not written to InfluxDB!`,
+        //   null
+        // )
       }
       this.closed = true
     })
@@ -327,8 +327,8 @@ export default class WriteApiImpl implements WriteApi {
   }
 
   // PointSettings
-  defaultTags: {[key: string]: string} | undefined
-  useDefaultTags(tags: {[key: string]: string}): WriteApi {
+  defaultTags: { [key: string]: string } | undefined
+  useDefaultTags(tags: { [key: string]: string }): WriteApi {
     this.defaultTags = tags
     return this
   }
